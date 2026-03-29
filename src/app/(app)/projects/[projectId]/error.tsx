@@ -1,0 +1,13 @@
+"use client"
+
+import { Button } from "@/components/ui/button"
+
+export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-20">
+      <h2 className="text-lg font-semibold">Failed to load project</h2>
+      <p className="text-sm text-muted-foreground">{error.message}</p>
+      <Button onClick={reset} variant="outline">Try again</Button>
+    </div>
+  )
+}
