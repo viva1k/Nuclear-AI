@@ -36,8 +36,12 @@ export default function LoginPage() {
   const [adminEmail, setAdminEmail] = React.useState("")
   const [adminPassword, setAdminPassword] = React.useState("")
 
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
   // Load Google Identity Services script
   React.useEffect(() => {
+    if (!googleClientId) return
+
     const script = document.createElement("script")
     script.src = "https://accounts.google.com/gsi/client"
     script.async = true
@@ -47,10 +51,12 @@ export default function LoginPage() {
     return () => {
       document.body.removeChild(script)
     }
-  }, [])
+  }, [googleClientId])
 
   // Initialize and render Google Sign-In Button
   React.useEffect(() => {
+    if (!googleClientId) return
+
     if (typeof window !== "undefined") {
       const handleCredentialResponse = async (response: GoogleCredentialResponse) => {
         setLoading(true)
@@ -75,7 +81,7 @@ export default function LoginPage() {
         if (googleWindow.google) {
           clearInterval(checkGoogle)
           googleWindow.google.accounts.id.initialize({
-            client_id: "636980448670-jgn90b4hivtnk0gp97ua5eequ354ap37.apps.googleusercontent.com",
+            client_id: googleClientId,
             callback: handleCredentialResponse,
           })
 
@@ -92,7 +98,7 @@ export default function LoginPage() {
 
       return () => clearInterval(checkGoogle)
     }
-  }, [loginWithGoogle, router])
+  }, [loginWithGoogle, router, googleClientId])
 
   // Redirect if already logged in
   React.useEffect(() => {
@@ -204,16 +210,20 @@ export default function LoginPage() {
                     {loading ? "Signing in..." : (<>Sign in <ArrowRight className="ml-2 h-4 w-4" /></>)}
                   </Button>
 
-                  <div className="relative w-full my-1">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
+                  {googleClientId && (
+                    <>
+                      <div className="relative w-full my-1">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                        </div>
+                      </div>
 
-                  <div id="google-signin-btn" className="flex justify-center w-full min-h-[40px]" />
+                      <div id="google-signin-btn" className="flex justify-center w-full min-h-[40px]" />
+                    </>
+                  )}
 
                   <p className="text-sm text-muted-foreground text-center">
                     Don&apos;t have an account?{" "}
