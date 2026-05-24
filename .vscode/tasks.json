@@ -1,0 +1,34 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "User Input Loop",
+			"type": "shell",
+			"command": "python .qoder/userinput.py",
+			"isBackground": false
+		},
+		{
+			"label": "User Input Loop",
+			"type": "shell",
+			"command": "c:/python313/python.exe .qoder/userinput.py",
+			"isBackground": false
+		},
+		{
+			"label": "userinput",
+			"type": "shell",
+			"command": "c:/python313/python.exe -c \"user_input = input('prompt: '); print(user_input)\"",
+			"isBackground": false
+		},
+		{
+			"label": "userinput2",
+			"type": "shell",
+			"command": "c:/python313/python.exe .qoder/userinput.py",
+			"isBackground": false
+		},
+		{
+			"label": "Run userinput.py feedback loop",
+			"type": "shell",
+			"command": "c:/python313/python.exe .qoder/userinput.py"
+		}
+	]
+}
