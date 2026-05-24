@@ -95,8 +95,12 @@ async def shutdown():
     await db.disconnect()
 
 # --- ML & AI SETUP ---
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD_jUPoZlN1cdWJFScHijtfkRA9soQX8Mg")
-client = genai.Client(api_key=GEMINI_API_KEY)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+client = None
+if GEMINI_API_KEY:
+    client = genai.Client(api_key=GEMINI_API_KEY)
+else:
+    print("⚠️ WARNING: GEMINI_API_KEY environment variable is not set. AI assistant endpoints will be disabled.")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(BASE_DIR, 'model.pkl')
@@ -263,6 +267,11 @@ def predict_status(data: AdvancedReactorData, current_user = Depends(get_current
 
 @app.post("/ai-assistant")
 def ai_assistant(query_request: AIQueryRequest, current_user = Depends(get_current_user)):
+    if not client:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="AI Assistant is currently unavailable (missing GEMINI_API_KEY environment variable)."
+        )
     ctx = query_request.context
     
     try:
@@ -290,6 +299,11 @@ def ai_assistant(query_request: AIQueryRequest, current_user = Depends(get_curre
 @app.post("/generate-report")
 def generate_report(query_request: AIQueryRequest, current_user = Depends(require_admin)):
     # Example showing RBAC: Only ADMIN users can generate reports.
+    if not client:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="AI Report Generator is currently unavailable (missing GEMINI_API_KEY environment variable)."
+        )
     ctx = query_request.context
     
     try:
